@@ -1,0 +1,22 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+pymongo = "*"
+redis = "*"
+envparse = "*"
+requests = "*"
+numpy = "*"
+pandas = "*"
+bert-serving-client = "*"
+scikit-learn = "*"
+networkx = "*"
+tok = "*"
+langid = "*"
+
+[requires]
+python_version = "3.7"
