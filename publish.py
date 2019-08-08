@@ -9,7 +9,7 @@
  @Description:
  @License    : (C) Copyright 2016-2017, iFuture Corporation Limited.
 """
-from mongo_db_util import find_data
+from mongo_db_util import find_data, get_entertainment_data
 import os
 from datetime import datetime
 from summary import summary
@@ -56,10 +56,13 @@ def publish():
                     del line
                 else:
                     text = article.get("content", None)
-                    text = article.get('title') + text  # 添加 title 内容作为一个
-                    summ = summary(text)
-                    if summ == "":
-                        summ = article.get("title", None)
+                    if text is None or text.strip() in ('', 'None'):
+                        summ = article.get('title')
+                    else:
+                        text = article.get('title') + '\n' + text  # 添加 title 内容作为一个
+                        summ = summary(text)
+                        if summ.strip() == "":
+                            summ = article.get("title", None)
                     line = build_markdown(
                         summ,
                         MarkdownType.REFERENCE
@@ -107,6 +110,9 @@ def build_markdown(text, markdown_type: MarkdownType, url=None):
 
 def load_data_from_mongo():
     datas = {}
+    entertainment = "娱乐"
+    data = get_entertainment_data(['sina', 'tencent'])
+    datas.setdefault(entertainment, data)
     for collection, category in COLLECTIONS.items():
         items = find_data(collection, 1)
         datas.setdefault(category, items)

@@ -13,7 +13,8 @@ from pymongo import MongoClient, DESCENDING
 import datetime
 import redis
 from constant import (MONGODB_HOST, MONGODB_PORT, REDIS_PWD, DAILY_FORMAT, PUBLISHED,
-                      MONGODB_PWD, MONGODB_USER, REDIS_HOST, REDIS_PORT)
+                      MONGODB_PWD, MONGODB_USER, REDIS_HOST, REDIS_PORT, PROD_MONGODB_USER,
+                      PROD_MONGODB_PWD, PROD_MONGODB_HOST, PROD_MONGODB_PORT)
 
 TODAY = datetime.datetime.now().strftime(DAILY_FORMAT)
 rdb_publish = redis.StrictRedis().from_url("redis://:{0}@{1}:{2}/3".format(
@@ -25,6 +26,11 @@ if MONGODB_USER != '':
     client.data_db.authenticate(MONGODB_USER, MONGODB_PWD, mechanism='SCRAM-SHA-1')
 mdb = client.data_db
 
+client = MongoClient(host=PROD_MONGODB_HOST, port=PROD_MONGODB_PORT)
+if PROD_MONGODB_USER != '':
+    client.data_db.authenticate(PROD_MONGODB_USER, PROD_MONGODB_PWD, mechanism='SCRAM-SHA-1')
+prod_mdb = client.data_db
+
 
 def mongo_map(name):
     """
@@ -33,6 +39,24 @@ def mongo_map(name):
     :return: mongo集合，类似于表格
     """
     return eval('mdb.{0}'.format(name))
+
+
+def get_entertainment_data(collections, days=1):
+    day_regexs = []
+    for day in range(days):
+        cur_day = datetime.datetime.now() + datetime.timedelta(days=day)
+        cur_day_str = cur_day.strftime(DAILY_FORMAT)
+        day_regexs.append({"news_time": {'$regex': "{0}".format(cur_day_str)}})
+    one_count = 5
+    for collection in collections:
+        pipeline = [
+            {"$match":
+                {"$or": day_regexs}
+             },
+            {"$sample": {"size": one_count}}
+        ]
+        site_items = prod_mdb[collection].aggregate(pipeline, allowDiskUse=True)
+        yield from site_items
 
 
 def find_data(collection, days=1):
