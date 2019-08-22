@@ -50,45 +50,47 @@ def publish():
                 )
                 lines.append(line)
                 del line
-            # 概要
-            description = article.get("description", "")
-            # intro 小说
-            intro = article.get("intro", "")
-            if description.strip() == '':
-                if intro.strip() != "":
-                    # 小说内容
-                    author = article.get("author", "")
-                    tags = article.get("tags", "")
-                    count = article.get("count", "").replace("\n", "")
-                    status = article.get("status", "")
-                    line = build_markdown(
-                        [author, tags, intro, count, status],
-                        MarkdownType.NOVEL
-                    )
-                    lines.append(line)
-                    del line
-                else:
-                    text = article.get("content", None)
-                    if text is None or text.strip() in ('', 'None'):
-                        summ = article.get('title')
+            # 其他类型，包括新闻、小说、科技
+            else:
+                # 概要
+                description = article.get("description", "")
+                # intro 小说
+                intro = article.get("intro", "")
+                if description.strip() == '':
+                    if intro.strip() != "":
+                        # 小说内容
+                        author = article.get("author", "")
+                        tags = article.get("tags", "")
+                        count = article.get("count", "").replace("\n", "")
+                        status = article.get("status", "")
+                        line = build_markdown(
+                            [author, tags, intro, count, status],
+                            MarkdownType.NOVEL
+                        )
+                        lines.append(line)
+                        del line
                     else:
-                        text = article.get('title') + '\n' + text  # 添加 title 内容作为一个
-                        summ = summary(text)
-                        if summ.strip() == "":
-                            summ = article.get("title", None)
+                        text = article.get("content", None)
+                        if text is None or text.strip() in ('', 'None'):
+                            summ = article.get('title')
+                        else:
+                            text = article.get('title') + '\n' + text  # 添加 title 内容作为一个
+                            summ = summary(text)
+                            if summ.strip() == "":
+                                summ = article.get("title", None)
+                        line = build_markdown(
+                            summ,
+                            MarkdownType.REFERENCE
+                        )
+                        lines.append(line)
+                        del line
+                else:
                     line = build_markdown(
-                        summ,
+                        description,
                         MarkdownType.REFERENCE
                     )
                     lines.append(line)
                     del line
-            else:
-                line = build_markdown(
-                    description,
-                    MarkdownType.REFERENCE
-                )
-                lines.append(line)
-                del line
     # 导出Markdown文件
     with open(file_name, mode='w', encoding='utf-8') as f:
         for line in lines:
@@ -120,7 +122,7 @@ def build_markdown(text, markdown_type: MarkdownType, url=None):
         line = "\n\n".join(lines)
     elif markdown_type == MarkdownType.PAPER:
         lines = []
-        tags = ["作者", "标签", "代码", "描述"]
+        tags = ["日期", "标签", "代码", "描述"]
         for i, txt in enumerate(text):
             lines.append("{0} {1}：{2}".format(GREATER_THAN, tags[i], txt))
             line = "\n\n".join(lines)
