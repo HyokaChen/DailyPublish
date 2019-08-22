@@ -47,6 +47,7 @@ COLLECTIONS = {
     "animation": "动漫",
     "technology": "科技",
     "novel": "小说",
+    "paper": "论文"
     # "entertainment",
 }
 PUBLISHED = "article-{0}-node"
@@ -57,4 +58,5 @@ class MarkdownType(Enum):
     TITLE = 1,
     REFERENCE = 2,
     NOVEL = 3,
+    PAPER = 4,
 

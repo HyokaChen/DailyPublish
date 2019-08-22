@@ -37,6 +37,19 @@ def publish():
             )
             lines.append(line)
             del line
+            # 论文
+            code = article.get("code", "")
+            if code.strip() != '':
+                # 论文块级别
+                author = article.get("author", "")
+                tags = article.get("tags", "")
+                description = article.get("description", "")
+                line = build_markdown(
+                    [author, tags, code, description],
+                    MarkdownType.PAPER
+                )
+                lines.append(line)
+                del line
             # 概要
             description = article.get("description", "")
             # intro 小说
@@ -105,6 +118,12 @@ def build_markdown(text, markdown_type: MarkdownType, url=None):
                     tags[i] = '章节末'
             lines.append("{0} {1}：{2}".format(GREATER_THAN, tags[i], txt))
         line = "\n\n".join(lines)
+    elif markdown_type == MarkdownType.PAPER:
+        lines = []
+        tags = ["作者", "标签", "代码", "描述"]
+        for i, txt in enumerate(text):
+            lines.append("{0} {1}：{2}".format(GREATER_THAN, tags[i], txt))
+            line = "\n\n".join(lines)
     return line
 
 

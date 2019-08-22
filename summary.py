@@ -18,7 +18,8 @@ from langid.langid import LanguageIdentifier, model
 from constant import CHINESE_BERT_SERVICE, MULTI_BERT_SERVICE
 from sklearn.metrics.pairwise import cosine_similarity
 chinese_bc = BertClient(ip=CHINESE_BERT_SERVICE)
-multi_bc = BertClient(ip=MULTI_BERT_SERVICE)
+# multi_bc = BertClient(ip=MULTI_BERT_SERVICE)
+multi_bc = BertClient(ip=CHINESE_BERT_SERVICE)
 chinese_re_sentences = re.compile('([﹒﹔﹖﹗．；。！？]["’”」』]{0,2}|：(?=["‘“「『]{1,2}|$))')
 IDENTIFIER = LanguageIdentifier.from_modelstring(model, norm_probs=True)
 chinese_punc = re.compile(r'[；，：、]')
