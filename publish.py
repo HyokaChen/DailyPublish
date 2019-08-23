@@ -44,6 +44,9 @@ def publish():
                 author = article.get("author", "")
                 tags = article.get("tags", "")
                 description = article.get("description", "")
+                description_list = description.split('\n\n')
+                if len(description_list) > 0:
+                    description = description_list[0]
                 line = build_markdown(
                     [author, tags, code, description],
                     MarkdownType.PAPER
@@ -64,7 +67,7 @@ def publish():
                         count = article.get("count", "").replace("\n", "")
                         status = article.get("status", "")
                         line = build_markdown(
-                            [author, tags, intro, count, status],
+                            [author, tags, intro.replace("\n", ""), count, status],
                             MarkdownType.NOVEL
                         )
                         lines.append(line)
