@@ -106,7 +106,7 @@ def page_rank(sentences, similar_matrix, top_k, flag):
         else:
             if english_punc.match(end_char):
                 sentence = '{0}. '.format(str(sentence).rstrip(sentence[-1]))
-            elif end_char in ['. ', '。', '!', '?', '！', '？', '.']:
+            elif end_char in ['. ', '。', '!', '?', '！', '？', '.', '-']:
                 pass
             else:
                 sentence += '. '
