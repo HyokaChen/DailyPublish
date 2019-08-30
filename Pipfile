@@ -17,6 +17,7 @@ scikit-learn = "*"
 networkx = "*"
 tok = "*"
 langid = "*"
+jieba = "*"
 
 [requires]
 python_version = "3.7"

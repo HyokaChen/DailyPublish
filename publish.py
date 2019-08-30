@@ -77,8 +77,7 @@ def publish():
                         if text is None or text.strip() in ('', 'None'):
                             summ = article.get('title')
                         else:
-                            text = article.get('title') + '\n' + text  # 添加 title 内容作为一个
-                            summ = summary(text)
+                            summ = summary(article.get('title'), text)
                             if summ.strip() == "":
                                 summ = article.get("title", None)
                         line = build_markdown(
