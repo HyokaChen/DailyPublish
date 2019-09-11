@@ -17,12 +17,12 @@ from constant import (DESCRIPTION, LEFT_BRACKET, RIGHT_BRACKET, COLLECTIONS, DAI
                       LEFT_ROUND_BRACKET, RIGHT_ROUND_BRACKET, HASH, GREATER_THAN, MarkdownType)
 
 
-def publish():
+def publish(days=(0, )):
     file_name = "./publish.{0}.md".format(datetime.now().strftime(DAILY_FORMAT))
     if os.path.exists(file_name):
         print("今天已经导出了文档了~~")
     lines = []
-    datas = load_data_from_mongo()
+    datas = load_data_from_mongo(days)
     for category, articles in datas.items():
         # 书写大分类标题
         line = build_markdown(category, MarkdownType.CATEGORY)
@@ -131,16 +131,16 @@ def build_markdown(text, markdown_type: MarkdownType, url=None):
     return line
 
 
-def load_data_from_mongo():
+def load_data_from_mongo(days=(0, )):
     datas = {}
     entertainment = "娱乐"
-    data = get_entertainment_data(['sina', 'tencent'])
+    data = get_entertainment_data(['sina', 'tencent'], days)
     datas.setdefault(entertainment, data)
     for collection, category in COLLECTIONS.items():
-        items = find_data(collection, 1)
+        items = find_data(collection, days)
         datas.setdefault(category, items)
     return datas
 
 
 if __name__ == '__main__':
-    publish()
+    publish((-1, 0))

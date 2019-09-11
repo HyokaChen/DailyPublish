@@ -41,9 +41,9 @@ def mongo_map(name):
     return eval('mdb.{0}'.format(name))
 
 
-def get_entertainment_data(collections, days=1):
+def get_entertainment_data(collections, days=(0, )):
     day_regexs = []
-    for day in range(days):
+    for day in days:
         cur_day = datetime.datetime.now() + datetime.timedelta(days=day)
         cur_day_str = cur_day.strftime(DAILY_FORMAT)
         day_regexs.append({"news_time": {'$regex': "{0}".format(cur_day_str)}})
@@ -60,7 +60,7 @@ def get_entertainment_data(collections, days=1):
         yield from site_items
 
 
-def find_data(collection, days=1):
+def find_data(collection, days=(0, )):
     if collection == "novel":
         _id_list = rdb_publish.spop(PUBLISHED.format(collection), count=2)
         for _id in _id_list:
@@ -85,7 +85,7 @@ def find_data(collection, days=1):
         #     ]
         # else:
         day_regexs = []
-        for day in range(days):
+        for day in days:
             cur_day = datetime.datetime.now() + datetime.timedelta(days=day)
             cur_day_str = cur_day.strftime(DAILY_FORMAT)
             day_regexs.append({"news_time": {'$regex': "{0}".format(cur_day_str)}})

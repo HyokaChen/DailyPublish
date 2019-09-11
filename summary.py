@@ -14,7 +14,8 @@ import numpy as np
 import networkx as nx
 from tok import sent_tokenize
 import jieba.analyse
-import jieba.posseg
+# import jieba.posseg
+import pkuseg
 from bert_serving.client import BertClient
 from langid.langid import LanguageIdentifier, model
 from constant import (CHINESE_BERT_SERVICE, MULTI_BERT_SERVICE,
@@ -171,11 +172,11 @@ def calc_keywords(title, text):
     for w in words_best:
         text = text + " " + w
     # 计算词性，提取名词和动词
-    words = jieba.posseg.cut(text)
+    # words = jieba.posseg.cut(text)
+    seg = pkuseg.pkuseg(postag=True)
+    words = seg.cut(text)
     keywords = list()
-    for w in words:
-        flag = w.flag
-        word = w.word
+    for flag, word in words:
         if flag.find('n') >= 0 or flag.find('v') >= 0:
             if len(word) > 1:
                 keywords.append(word)
