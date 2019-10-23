@@ -143,6 +143,8 @@ def page_rank(sentences, similar_matrix, top_k, flag):
                 sentence = '{0}。'.format(str(sentence).rstrip(sentence[-1]))
             elif end_char in ['. ', '。', '!', '?', '！', '？', '.']:
                 pass
+            elif end_char in (';', '；', '"', '”'):
+                sentence = sentence.replace(end_char, "。")
             else:
                 sentence += '。'
         else:
@@ -212,31 +214,41 @@ def calc_position_weight(sentences):
 
 
 def summary(title, text):
-    keywords = calc_keywords(title, text)
-    sentences, flag = cut_doc2sentences(text)
-    if len(sentences) == 0:
-        return ""
-    word_vector_map = []
-    for sentence in sentences:
-        word_vector_map.append(
-            word_vector(sentence['text'], flag)
-        )
-    calc_sentence_weight_by_keywords(keywords, sentences)
-    calc_position_weight(sentences)
-    # 计算整体的权重
-    for sentence in sentences:
-        sentence["weight"] = sentence["weight_position"] + sentence["weight_keywords"]
-    similar_matrix = create_cosine_matrix(len(sentences), word_vector_map=word_vector_map)
-    top_k_sentences = []
-    del word_vector_map
-    ranked_sentences = page_rank(sentences, similar_matrix, 3, flag)
-    del sentences
-    for ranked_sentence in ranked_sentences:
-        top_k_sentences.append(ranked_sentence)
-    del ranked_sentences
-    summary_content_sentences = sorted(top_k_sentences, key=lambda item: item[0])
-    del top_k_sentences
-    return "".join((sent[1] for sent in summary_content_sentences))
+    one_100 = text.replace("\r\n", "  ")[0: 100]
+    end_char = one_100[-1]
+    if end_char in ('. ', '。', '!', '?', '！', '？', '.'):
+        result = '{0}......'.format(str(one_100).rstrip(end_char))
+    else:
+        result = '{0}......'.format(str(one_100))
+    print("前 100 个字....")
+    print(result)
+    return result
+    ## 不使用 text rank，使用开头一百个字
+    # keywords = calc_keywords(title, text)
+    # sentences, flag = cut_doc2sentences(text)
+    # if len(sentences) == 0:
+    #     return ""
+    # word_vector_map = []
+    # for sentence in sentences:
+    #     word_vector_map.append(
+    #         word_vector(sentence['text'], flag)
+    #     )
+    # calc_sentence_weight_by_keywords(keywords, sentences)
+    # calc_position_weight(sentences)
+    # # 计算整体的权重
+    # for sentence in sentences:
+    #     sentence["weight"] = sentence["weight_position"] + sentence["weight_keywords"]
+    # similar_matrix = create_cosine_matrix(len(sentences), word_vector_map=word_vector_map)
+    # top_k_sentences = []
+    # del word_vector_map
+    # ranked_sentences = page_rank(sentences, similar_matrix, 3, flag)
+    # del sentences
+    # for ranked_sentence in ranked_sentences:
+    #     top_k_sentences.append(ranked_sentence)
+    # del ranked_sentences
+    # summary_content_sentences = sorted(top_k_sentences, key=lambda item: item[0])
+    # del top_k_sentences
+    # return "".join((sent[1] for sent in summary_content_sentences))
 
 
 if __name__ == '__main__':

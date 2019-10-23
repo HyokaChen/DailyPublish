@@ -143,4 +143,4 @@ def load_data_from_mongo(days=(0, )):
 
 
 if __name__ == '__main__':
-    publish((-1, 0))
+    publish((0,))
