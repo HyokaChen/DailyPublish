@@ -28,7 +28,7 @@ mdb = client.data_db
 
 client = MongoClient(host=PROD_MONGODB_HOST, port=PROD_MONGODB_PORT)
 if PROD_MONGODB_USER != '':
-    client.data_db.authenticate(PROD_MONGODB_USER, PROD_MONGODB_PWD, mechanism='SCRAM-SHA-1')
+   client.data_db.authenticate(PROD_MONGODB_USER, PROD_MONGODB_PWD, mechanism='SCRAM-SHA-1')
 prod_mdb = client.data_db
 
 
@@ -55,9 +55,15 @@ def get_entertainment_data(collections, days=(0, )):
              },
             {"$sample": {"size": one_count}}
         ]
-        site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
-        #site_items = prod_mdb[collection].aggregate(pipeline, allowDiskUse=True)
+        # site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
+        site_items = prod_mdb[collection].aggregate(pipeline, allowDiskUse=True)
         yield from site_items
+
+
+def get_wallpaper_data(collection):
+    _id_list = rdb_publish.spop(PUBLISHED.format(collection), count=1)
+    for _id in _id_list:
+        yield mdb[collection].find_one({"_id": _id.decode('utf-8')})
 
 
 def find_data(collection, days=(0, )):
@@ -105,8 +111,8 @@ def find_data(collection, days=(0, )):
                 one_count += 2
                 yield from site_items
         else:
-            one_count = 4
-            for site in ['ctolib', 'tuicool']:
+            one_count = 3
+            for site in ['ctolib', 'tuicool', 'ithome']:
                 pipeline = [
                     {"$match":
                         {"$and": [

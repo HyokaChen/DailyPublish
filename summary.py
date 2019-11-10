@@ -22,9 +22,9 @@ from constant import (CHINESE_BERT_SERVICE, MULTI_BERT_SERVICE,
                       FIRST_SECTION, FIRST_SENTENCE, LAST_SECTION,
                       LAST_SENTENCE)
 from sklearn.metrics.pairwise import cosine_similarity
-chinese_bc = BertClient(ip=CHINESE_BERT_SERVICE)
+chinese_bc = None  # BertClient(ip=CHINESE_BERT_SERVICE)
 # multi_bc = BertClient(ip=MULTI_BERT_SERVICE)
-multi_bc = BertClient(ip=CHINESE_BERT_SERVICE)
+multi_bc = None  # BertClient(ip=CHINESE_BERT_SERVICE)
 chinese_re_sentences = re.compile('([﹒﹔﹖﹗．；。！？]["’”」』]{0,2}|：(?=["‘“「『]{1,2}|$))')
 IDENTIFIER = LanguageIdentifier.from_modelstring(model, norm_probs=True)
 chinese_punc = re.compile(r'[；，：、]')
@@ -214,7 +214,8 @@ def calc_position_weight(sentences):
 
 
 def summary(title, text):
-    one_100 = text.replace("\r\n", "  ")[0: 100]
+    one_100 = text.replace("\r", "").replace("\n", "")
+    one_100 = one_100[0: 100]
     end_char = one_100[-1]
     if end_char in ('. ', '。', '!', '?', '！', '？', '.'):
         result = '{0}......'.format(str(one_100).rstrip(end_char))

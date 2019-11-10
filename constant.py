@@ -56,6 +56,7 @@ COLLECTIONS = {
 }
 PUBLISHED = "article-{0}-node"
 
+
 @unique
 class MarkdownType(Enum):
     CATEGORY = 0,
@@ -63,4 +64,5 @@ class MarkdownType(Enum):
     REFERENCE = 2,
     NOVEL = 3,
     PAPER = 4,
+    IMAGE = 5,
 

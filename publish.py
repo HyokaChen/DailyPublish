@@ -9,7 +9,7 @@
  @Description:
  @License    : (C) Copyright 2016-2017, iFuture Corporation Limited.
 """
-from mongo_db_util import find_data, get_entertainment_data
+from mongo_db_util import find_data, get_entertainment_data, get_wallpaper_data
 import os
 from datetime import datetime
 from summary import summary
@@ -24,6 +24,11 @@ def publish(days=(0, )):
     lines = []
     datas = load_data_from_mongo(days)
     for category, articles in datas.items():
+        if category == '壁纸':
+            for article in articles:
+                line = build_markdown(category, MarkdownType.IMAGE, article.get("url", ""))
+                lines.append(line)
+            continue
         # 书写大分类标题
         line = build_markdown(category, MarkdownType.CATEGORY)
         lines.append(line)
@@ -128,11 +133,17 @@ def build_markdown(text, markdown_type: MarkdownType, url=None):
         for i, txt in enumerate(text):
             lines.append("{0} {1}：{2}".format(GREATER_THAN, tags[i], txt))
             line = "\n\n".join(lines)
+    elif markdown_type == MarkdownType.IMAGE:
+        line = "![Bing 每日壁纸]({0})".format(url)
     return line
 
 
 def load_data_from_mongo(days=(0, )):
     datas = {}
+    # 壁纸
+    wallpaper = "壁纸"
+    wallpaper_data = get_wallpaper_data('wallpaper')
+    datas.setdefault(wallpaper, wallpaper_data)
     entertainment = "娱乐"
     data = get_entertainment_data(['sina', 'tencent'], days)
     datas.setdefault(entertainment, data)
