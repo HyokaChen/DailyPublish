@@ -62,8 +62,15 @@ def get_entertainment_data(collections, days=(0, )):
 
 def get_wallpaper_data(collection):
     _id_list = rdb_publish.spop(PUBLISHED.format(collection), count=1)
-    for _id in _id_list:
-        yield mdb[collection].find_one({"_id": _id.decode('utf-8')})
+    if len(_id_list) > 0:
+        return mdb[collection].find_one({"_id": _id_list[0].decode('utf-8')})
+    else:
+        pipeline = [
+            {"$sample": {"size": 1}}
+        ]
+        results = mdb[collection].aggregate(pipeline, allowDiskUse=True)
+        for result in results:
+            return result
 
 
 def find_data(collection, days=(0, )):
@@ -123,7 +130,7 @@ def find_data(collection, days=(0, )):
                     {"$sample": {"size": one_count}}
                 ]
                 site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
-                one_count *= 2
+                one_count += 1
                 yield from site_items
 
 

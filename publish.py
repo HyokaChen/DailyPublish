@@ -14,7 +14,48 @@ import os
 from datetime import datetime
 from summary import summary
 from constant import (DESCRIPTION, LEFT_BRACKET, RIGHT_BRACKET, COLLECTIONS, DAILY_FORMAT,
-                      LEFT_ROUND_BRACKET, RIGHT_ROUND_BRACKET, HASH, GREATER_THAN, MarkdownType)
+                      LEFT_ROUND_BRACKET, RIGHT_ROUND_BRACKET, HASH, GREATER_THAN, MarkdownType,
+                      BAR, TITLE, TAGS, DATE, TIME_FORMAT, THUMBNAIL)
+
+
+def weekday_n(number):
+    if number == 0:
+        weekday = '周一'
+    elif number == 1:
+        weekday = '周二'
+    elif number == 2:
+        weekday = '周三'
+    elif number == 3:
+        weekday = '周四'
+    elif number == 4:
+        weekday = '周五'
+    elif number == 5:
+        weekday = '周六'
+    else:
+        weekday = '周日'
+    return weekday
+
+
+def build_title():
+    append_line = []
+    now = datetime.now()
+    today = now.strftime(DAILY_FORMAT)
+    weekday = weekday_n(now.weekday())
+    low_today_ = now.strftime(TIME_FORMAT)
+    wallpaper = "壁纸"
+    wallpaper_data = get_wallpaper_data('wallpaper')
+    wallpaper_url = wallpaper_data.get("url", "/images/{0}.png".format(weekday))
+    append_line.append(BAR)
+    append_line.append('{0}: {1}-每日随机资讯'.format(TITLE, today))
+    append_line.append('{0}: 资讯'.format(TAGS))
+    append_line.append('{0}: {1}'.format(THUMBNAIL, wallpaper_url))
+    append_line.append('{0}: {1}'.format(DATE, low_today_))
+    append_line.append(BAR)
+    append_line.append('\r\n')
+    # 壁纸
+    line = build_markdown(wallpaper, MarkdownType.IMAGE, wallpaper_url)
+    append_line.append(line)
+    return append_line
 
 
 def publish(days=(0, )):
@@ -22,13 +63,10 @@ def publish(days=(0, )):
     if os.path.exists(file_name):
         print("今天已经导出了文档了~~")
     lines = []
+    lines.extend(build_title())
+    # 标头
     datas = load_data_from_mongo(days)
     for category, articles in datas.items():
-        if category == '壁纸':
-            for article in articles:
-                line = build_markdown(category, MarkdownType.IMAGE, article.get("url", ""))
-                lines.append(line)
-            continue
         # 书写大分类标题
         line = build_markdown(category, MarkdownType.CATEGORY)
         lines.append(line)
@@ -140,10 +178,6 @@ def build_markdown(text, markdown_type: MarkdownType, url=None):
 
 def load_data_from_mongo(days=(0, )):
     datas = {}
-    # 壁纸
-    wallpaper = "壁纸"
-    wallpaper_data = get_wallpaper_data('wallpaper')
-    datas.setdefault(wallpaper, wallpaper_data)
     entertainment = "娱乐"
     data = get_entertainment_data(['sina', 'tencent'], days)
     datas.setdefault(entertainment, data)
