@@ -118,7 +118,7 @@ def find_data(collection, days=(0, )):
                 one_count += 2
                 yield from site_items
         else:
-            one_count = 3
+            one_count = 4
             for site in ['ctolib', 'tuicool', 'ithome']:
                 pipeline = [
                     {"$match":
@@ -130,7 +130,6 @@ def find_data(collection, days=(0, )):
                     {"$sample": {"size": one_count}}
                 ]
                 site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
-                one_count += 1
                 yield from site_items
 
 
