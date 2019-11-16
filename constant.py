@@ -57,6 +57,7 @@ COLLECTIONS = {
     "animation": "动漫",
     "technology": "科技",
     "novel": "小说",
+    "game": "游戏",
     "paper": "论文"
     # "entertainment",
 }
