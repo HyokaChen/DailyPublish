@@ -73,6 +73,8 @@ def publish(days=(0, )):
         del line
         for article in articles:
             # 标题
+            if article is None:
+                continue
             line = build_markdown(
                 article.get("title", None),
                 MarkdownType.TITLE,

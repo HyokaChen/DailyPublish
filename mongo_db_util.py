@@ -26,10 +26,10 @@ if MONGODB_USER != '':
     client.data_db.authenticate(MONGODB_USER, MONGODB_PWD, mechanism='SCRAM-SHA-1')
 mdb = client.data_db
 
-client = MongoClient(host=PROD_MONGODB_HOST, port=PROD_MONGODB_PORT)
-if PROD_MONGODB_USER != '':
-   client.data_db.authenticate(PROD_MONGODB_USER, PROD_MONGODB_PWD, mechanism='SCRAM-SHA-1')
-prod_mdb = client.data_db
+# client = MongoClient(host=PROD_MONGODB_HOST, port=PROD_MONGODB_PORT)
+# if PROD_MONGODB_USER != '':
+#    client.data_db.authenticate(PROD_MONGODB_USER, PROD_MONGODB_PWD, mechanism='SCRAM-SHA-1')
+# prod_mdb = client.data_db
 
 
 def mongo_map(name):
@@ -55,8 +55,8 @@ def get_entertainment_data(collections, days=(0, )):
              },
             {"$sample": {"size": one_count}}
         ]
-        # site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
-        site_items = prod_mdb[collection].aggregate(pipeline, allowDiskUse=True)
+        site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
+        # site_items = prod_mdb[collection].aggregate(pipeline, allowDiskUse=True)
         yield from site_items
 
 
@@ -84,7 +84,7 @@ def find_data(collection, days=(0, )):
         #     # {"$limit": 10},
         # ]
     elif collection == "paper":
-        _id_list = rdb_publish.spop(PUBLISHED.format(collection), count=2)
+        _id_list = rdb_publish.spop(PUBLISHED.format(collection), count=3)
         for _id in _id_list:
             yield mdb[collection].find_one({"_id": _id.decode('utf-8')})
     else:
