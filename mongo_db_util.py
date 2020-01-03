@@ -104,7 +104,7 @@ def find_data(collection, days=(0, )):
             day_regexs.append({"news_time": {'$regex': "{0}".format(cur_day_str)}})
         if collection == 'animation':
             one_count = 2
-            for site in ['acgmh', 'dmzj', 'tencent']:
+            for site in ['acgmh', 'dmzj', 'tencent', 'gamersky']:
                 pipeline = [
                     {"$match":
                         {"$and": [
