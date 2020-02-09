@@ -98,7 +98,7 @@ def publish(days=(0, )):
                 )
                 lines.append(line)
                 del line
-            # 其他类型，包括新闻、小说、科技
+            # 其他类型，包括新闻、小说、科技，财经
             else:
                 # 概要
                 description = article.get("description", "")

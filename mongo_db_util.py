@@ -132,6 +132,21 @@ def find_data(collection, days=(0, )):
                 site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
                 one_count += 2
                 yield from site_items
+        elif collection == "finance":
+            one_count = 6
+            for site in ["sina", ]:
+                pipeline = [
+                    {"$match":
+                        {"$and": [
+                            {"$or": day_regexs},
+                            {"site": site}
+                        ]}
+                    },
+                    {"$sample": {"size": one_count}}
+                ]
+                site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
+                one_count += 2
+                yield from site_items
         else:
             one_count = 4
             for site in ['ctolib', 'tuicool', 'ithome']:

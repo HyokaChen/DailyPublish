@@ -55,6 +55,7 @@ DATE = 'date'
 # collections
 COLLECTIONS = {
     "animation": "动漫",
+    "finance": "财经",
     "technology": "科技",
     "novel": "小说",
     "game": "游戏",
