@@ -75,7 +75,7 @@ def get_wallpaper_data(collection):
 
 def find_data(collection, days=(0, )):
     if collection == "novel":
-        _id_list = rdb_publish.spop(PUBLISHED.format(collection), count=2)
+        _id_list = rdb_publish.spop(PUBLISHED.format(collection), count=1)
         for _id in _id_list:
             yield mdb[collection].find_one({"_id": _id.decode('utf-8')})
         ## 老方法
@@ -84,7 +84,7 @@ def find_data(collection, days=(0, )):
         #     # {"$limit": 10},
         # ]
     elif collection == "paper":
-        _id_list = rdb_publish.spop(PUBLISHED.format(collection), count=3)
+        _id_list = rdb_publish.spop(PUBLISHED.format(collection), count=1)
         for _id in _id_list:
             yield mdb[collection].find_one({"_id": _id.decode('utf-8')})
     else:
