@@ -84,7 +84,7 @@ def find_data(collection, days=(0, )):
         #     # {"$limit": 10},
         # ]
     elif collection == "paper":
-        _id_list = rdb_publish.spop(PUBLISHED.format(collection), count=1)
+        _id_list = rdb_publish.spop(PUBLISHED.format(collection), count=2)
         for _id in _id_list:
             yield mdb[collection].find_one({"_id": _id.decode('utf-8')})
     else:
@@ -148,8 +148,8 @@ def find_data(collection, days=(0, )):
                 one_count += 2
                 yield from site_items
         else:
-            one_count = 4
-            for site in ['ctolib', 'tuicool', 'ithome']:
+            one_count = 2
+            for site in ['ctolib', 'segmentfault', 'ithome', 'hackernews', 'huxiu', 'tuicool']:
                 pipeline = [
                     {"$match":
                         {"$and": [

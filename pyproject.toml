@@ -5,8 +5,13 @@ description = ""
 authors = ["EmptyChan <chen19941018@live.com>"]
 license = "MIT"
 
+[[tool.poetry.source]]
+name = "tsinghua"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true
+
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.7"
 pymongo = "*"
 redis = "*"
 envparse = "*"
@@ -19,6 +24,7 @@ networkx = "*"
 tok = "*"
 langid = "*"
 jieba = "*"
+pkuseg = "*"
 
 [tool.poetry.dev-dependencies]
 
