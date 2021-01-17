@@ -103,8 +103,8 @@ def find_data(collection, days=(0, )):
             cur_day_str = cur_day.strftime(DAILY_FORMAT)
             day_regexs.append({"news_time": {'$regex': "{0}".format(cur_day_str)}})
         if collection == 'animation':
-            one_count = 2
-            for site in ['acgmh', 'dmzj', 'tencent', 'gamersky']:
+            one_count = 3
+            for site in ['acgmh', 'dmzj', 'tencent', 'gamersky', 'acg178']:
                 pipeline = [
                     {"$match":
                         {"$and": [
@@ -115,7 +115,6 @@ def find_data(collection, days=(0, )):
                     {"$sample": {"size": one_count}}
                 ]
                 site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
-                one_count += 2
                 yield from site_items
         elif collection == 'game':
             one_count = 5
