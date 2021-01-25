@@ -26,6 +26,7 @@ if MONGODB_USER != '':
     client.data_db.authenticate(MONGODB_USER, MONGODB_PWD, mechanism='SCRAM-SHA-1')
 mdb = client.data_db
 
+
 # client = MongoClient(host=PROD_MONGODB_HOST, port=PROD_MONGODB_PORT)
 # if PROD_MONGODB_USER != '':
 #    client.data_db.authenticate(PROD_MONGODB_USER, PROD_MONGODB_PWD, mechanism='SCRAM-SHA-1')
@@ -41,7 +42,7 @@ def mongo_map(name):
     return eval('mdb.{0}'.format(name))
 
 
-def get_entertainment_data(collections, days=(0, )):
+def get_entertainment_data(collections, days=(0,)):
     day_regexs = []
     for day in days:
         cur_day = datetime.datetime.now() + datetime.timedelta(days=day)
@@ -51,7 +52,7 @@ def get_entertainment_data(collections, days=(0, )):
     for collection in collections:
         pipeline = [
             {"$match":
-                {"$or": day_regexs}
+                 {"$or": day_regexs}
              },
             {"$sample": {"size": one_count}}
         ]
@@ -73,7 +74,82 @@ def get_wallpaper_data(collection):
             return result
 
 
-def find_data(collection, days=(0, )):
+def find_news(days=(0,)):
+    collections = ['animation', 'game', 'finance', 'technology', 'tencent', 'sina']
+    day_regexs = []
+    news = []
+
+    pipeline = [
+        {
+            "$match":
+            {
+                "$and": [
+                    {"$or": day_regexs},
+                    {"site": ""}
+                ]
+            }
+        },
+        {
+            "$sample":
+            {
+                 "size": 0
+            }
+        }
+    ]
+    for day in days:
+        cur_day = datetime.datetime.now() + datetime.timedelta(days=day)
+        cur_day_str = cur_day.strftime(DAILY_FORMAT)
+        day_regexs.append({"news_time": {'$regex': "{0}".format(cur_day_str)}})
+    for collection in collections:
+        if collection == 'animation':
+            for site in ['acgmh', 'dmzj', 'tencent', 'gamersky', 'acg178']:
+                pipeline[0]["$match"]["$and"][1]["site"] = site
+                pipeline[1]["$sample"]["size"] = 3
+                site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
+                news.extend(site_items)
+        elif collection == 'game':
+            for site in ["3dmgame", ]:
+                pipeline[0]["$match"]["$and"][1]["site"] = site
+                pipeline[1]["$sample"]["size"] = 5
+                site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
+                news.extend(site_items)
+        elif collection == "finance":
+            for site in ["sina", ]:
+                pipeline[0]["$match"]["$and"][1]["site"] = site
+                pipeline[1]["$sample"]["size"] = 6
+                site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
+                news.extend(site_items)
+        elif collection == 'technology':
+            for site in ['segmentfault', 'ithome', 'hackernews', 'huxiu', 'tuicool']:
+                pipeline[0]["$match"]["$and"][1]["site"] = site
+                pipeline[1]["$sample"]["size"] = 2
+                site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
+                news.extend(site_items)
+        elif collection == 'tencent':
+            for site in ["tencent", ]:
+                pipeline[0]["$match"]["$and"][1]["site"] = site
+                pipeline[1]["$sample"]["size"] = 5
+                site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
+                news.extend(site_items)
+        elif collection == 'sina':
+            for site in ["sina", ]:
+                pipeline[0]["$match"]["$and"][1]["site"] = site
+                pipeline[1]["$sample"]["size"] = 5
+                site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
+                news.extend(site_items)
+    return sorted(news, key=lambda x: x['news_time'])
+
+
+def recommendation_media(collection, count=1):
+    medias = []
+    _id_list = rdb_publish.spop(PUBLISHED.format(collection), count=count)
+    for _id in _id_list:
+        x = mdb[collection].find_one({"_id": _id.decode('utf-8')})
+        medias.append(x)
+    return medias
+
+
+def find_data(collection, days=(0,)):
     if collection == "novel":
         _id_list = rdb_publish.spop(PUBLISHED.format(collection), count=1)
         for _id in _id_list:

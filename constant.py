@@ -59,7 +59,8 @@ COLLECTIONS = {
     "technology": "科技",
     "novel": "小说",
     "game": "游戏",
-    "paper": "论文"
+    "paper": "论文",
+    "news": "新闻"
     # "entertainment",
 }
 PUBLISHED = "article-{0}-node"
