@@ -105,28 +105,38 @@ def find_news(days=(0,)):
             for site in ['acgmh', 'dmzj', 'tencent', 'gamersky', 'acg178']:
                 pipeline[0]["$match"]["$and"][1]["site"] = site
                 pipeline[1]["$sample"]["size"] = 3
+                site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
+                news.extend(site_items)
         elif collection == 'game':
             for site in ["3dmgame", ]:
                 pipeline[0]["$match"]["$and"][1]["site"] = site
                 pipeline[1]["$sample"]["size"] = 5
+                site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
+                news.extend(site_items)
         elif collection == "finance":
             for site in ["sina", ]:
                 pipeline[0]["$match"]["$and"][1]["site"] = site
                 pipeline[1]["$sample"]["size"] = 6
+                site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
+                news.extend(site_items)
         elif collection == 'technology':
             for site in ['segmentfault', 'ithome', 'hackernews', 'huxiu', 'tuicool']:
                 pipeline[0]["$match"]["$and"][1]["site"] = site
                 pipeline[1]["$sample"]["size"] = 2
+                site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
+                news.extend(site_items)
         elif collection == 'tencent':
             for site in ["tencent", ]:
                 pipeline[0]["$match"]["$and"][1]["site"] = site
                 pipeline[1]["$sample"]["size"] = 5
+                site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
+                news.extend(site_items)
         elif collection == 'sina':
             for site in ["sina", ]:
                 pipeline[0]["$match"]["$and"][1]["site"] = site
                 pipeline[1]["$sample"]["size"] = 5
-        site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
-        news.extend(site_items)
+                site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
+                news.extend(site_items)
     return sorted(news, key=lambda x: x['news_time'])
 
 
