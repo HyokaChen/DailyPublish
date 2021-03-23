@@ -104,7 +104,7 @@ def find_news(days=(0,)):
         if collection == 'animation':
             for site in ['acgmh', 'dmzj', 'tencent', 'gamersky', 'acg178']:
                 pipeline[0]["$match"]["$and"][1]["site"] = site
-                pipeline[1]["$sample"]["size"] = 3
+                pipeline[1]["$sample"]["size"] = 4
                 site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
                 news.extend(site_items)
         elif collection == 'game':
@@ -122,7 +122,7 @@ def find_news(days=(0,)):
         elif collection == 'technology':
             for site in ['segmentfault', 'ithome', 'hackernews', 'huxiu', 'tuicool']:
                 pipeline[0]["$match"]["$and"][1]["site"] = site
-                pipeline[1]["$sample"]["size"] = 2
+                pipeline[1]["$sample"]["size"] = 4
                 site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
                 news.extend(site_items)
         elif collection == 'tencent':

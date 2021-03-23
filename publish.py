@@ -9,7 +9,7 @@
  @Description:
  @License    : (C) Copyright 2016-2017, iFuture Corporation Limited.
 """
-from mongo_db_util import find_data, get_entertainment_data, get_wallpaper_data
+from mongo_db_util import get_wallpaper_data, find_news, recommendation_media
 import os
 from datetime import datetime
 from summary import summary
@@ -66,6 +66,7 @@ def publish(days=(0, )):
     lines.extend(build_title())
     # 标头
     datas = load_data_from_mongo(days)
+
     for category, articles in datas.items():
         # 书写大分类标题
         line = build_markdown(category, MarkdownType.CATEGORY)
@@ -180,12 +181,17 @@ def build_markdown(text, markdown_type: MarkdownType, url=None):
 
 def load_data_from_mongo(days=(0, )):
     datas = {}
-    entertainment = "娱乐"
-    data = get_entertainment_data(['sina', 'tencent'], days)
-    datas.setdefault(entertainment, data)
-    for collection, category in COLLECTIONS.items():
-        items = find_data(collection, days)
-        datas.setdefault(category, items)
+    category_list = ["news", "novel", "paper"]
+    count = 1
+    for category in category_list:
+        if category == "news":
+            datas.setdefault(COLLECTIONS[category], find_news(days))
+        else:
+            if category == "novel":
+                count = 1
+            elif category == "paper":
+                count = 2
+            datas.setdefault(COLLECTIONS[category], recommendation_media(category, count=count))
     return datas
 
 
