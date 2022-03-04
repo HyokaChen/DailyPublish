@@ -102,7 +102,7 @@ def find_news(days=(0,)):
         day_regexs.append({"news_time": {'$regex': "{0}".format(cur_day_str)}})
     for collection in collections:
         if collection == 'animation':
-            for site in ['acgmh', 'dmzj', 'tencent', 'gamersky', 'acg178']:
+            for site in ['acgmh', 'dmzj', 'tencent', 'gamersky', 'acg178', 'zcool']:
                 pipeline[0]["$match"]["$and"][1]["site"] = site
                 pipeline[1]["$sample"]["size"] = 4
                 site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
@@ -114,15 +114,16 @@ def find_news(days=(0,)):
                 site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
                 news.extend(site_items)
         elif collection == "finance":
-            for site in ["sina", ]:
+            for site in ["sina", 'yi']:
                 pipeline[0]["$match"]["$and"][1]["site"] = site
                 pipeline[1]["$sample"]["size"] = 6
                 site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
                 news.extend(site_items)
         elif collection == 'technology':
-            for site in ['segmentfault', 'ithome', 'hackernews', 'huxiu', 'tuicool', 'oschina', 'btc126']:
+            for site in ['segmentfault', 'ithome', 'hackernews', 'huxiu', 'tuicool',
+                         'oschina', 'btc126', 'oschina', 'tech_sina_news']:
                 pipeline[0]["$match"]["$and"][1]["site"] = site
-                pipeline[1]["$sample"]["size"] = 3
+                pipeline[1]["$sample"]["size"] = 4
                 site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
                 news.extend(site_items)
         elif collection == 'tencent':
@@ -132,9 +133,9 @@ def find_news(days=(0,)):
                 site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
                 news.extend(site_items)
         elif collection == 'sina':
-            for site in ["sina", ]:
+            for site in ["sina", 'woshipm']:
                 pipeline[0]["$match"]["$and"][1]["site"] = site
-                pipeline[1]["$sample"]["size"] = 5
+                pipeline[1]["$sample"]["size"] = 3
                 site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
                 news.extend(site_items)
     return sorted(news, key=lambda x: x['news_time'])
