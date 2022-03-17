@@ -120,8 +120,8 @@ def find_news(days=(0,)):
                 site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
                 news.extend(site_items)
         elif collection == 'technology':
-            for site in ['segmentfault', 'ithome', 'hackernews', 'huxiu', 'tuicool',
-                         'oschina', 'btc126', 'oschina', 'tech_sina_news']:
+            for site in ['segmentfault', 'ithome', 'hackernews', 'huxiu',
+                         'oschina', 'btc126', 'oschina', 'tech_sina_news', 'tuicool']:
                 pipeline[0]["$match"]["$and"][1]["site"] = site
                 pipeline[1]["$sample"]["size"] = 4
                 site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
@@ -225,7 +225,7 @@ def find_data(collection, days=(0,)):
                 yield from site_items
         else:
             one_count = 2
-            for site in ['ctolib', 'segmentfault', 'ithome', 'hackernews', 'huxiu', 'tuicool']:
+            for site in ['tuicool', 'segmentfault', 'ithome', 'hackernews', 'huxiu', 'tuicool']:
                 pipeline = [
                     {"$match":
                         {"$and": [
