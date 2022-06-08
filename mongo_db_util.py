@@ -121,7 +121,7 @@ def find_news(days=(0,)):
                 news.extend(site_items)
         elif collection == 'technology':
             for site in ['segmentfault', 'ithome', 'hackernews', 'huxiu',
-                         'oschina', 'btc126', 'oschina', 'tech_sina_news', 'tuicool']:
+                         'oschina', 'btc126', 'tech_sina_news', 'tuicool', '36kr']:
                 pipeline[0]["$match"]["$and"][1]["site"] = site
                 pipeline[1]["$sample"]["size"] = 4
                 site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
