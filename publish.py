@@ -85,7 +85,7 @@ def publish(days=(0, )):
             del line
             # 论文
             code = article.get("code", "")
-            if code.strip() != '':
+            if code.strip() not in ('', 'None'):
                 # 论文块级别
                 author = article.get("author", "")
                 tags = article.get("tags", "")
@@ -105,8 +105,8 @@ def publish(days=(0, )):
                 description = article.get("description", "")
                 # intro 小说
                 intro = article.get("intro", "")
-                if description.strip() == '':
-                    if intro.strip() != "":
+                if description.strip() in ('', 'None'):
+                    if intro.strip() not in ('', 'None'):
                         # 小说内容
                         author = article.get("author", "")
                         tags = article.get("tags", "")
