@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """
  @File       : publish.py
  @Time       : 2019-07-01 20:58
@@ -13,9 +12,10 @@ from mongo_db_util import get_wallpaper_data, find_news, recommendation_media
 import os
 from datetime import datetime
 from summary import summary
-from constant import (DESCRIPTION, LEFT_BRACKET, RIGHT_BRACKET, COLLECTIONS, DAILY_FORMAT,
-                      LEFT_ROUND_BRACKET, RIGHT_ROUND_BRACKET, HASH, GREATER_THAN, MarkdownType,
-                      BAR, TITLE, TAGS, DATE, TIME_FORMAT, THUMBNAIL)
+from constant import (DESCRIPTION, LEFT_BRACKET, RIGHT_BRACKET, COLLECTIONS,
+                      DAILY_FORMAT, LEFT_ROUND_BRACKET, RIGHT_ROUND_BRACKET,
+                      HASH, GREATER_THAN, MarkdownType, BAR, TITLE, TAGS, DATE,
+                      TIME_FORMAT, THUMBNAIL)
 
 
 def weekday_n(number):
@@ -44,7 +44,8 @@ def build_title():
     low_today_ = now.strftime(TIME_FORMAT)
     wallpaper = "壁纸"
     wallpaper_data = get_wallpaper_data('wallpaper')
-    wallpaper_url = wallpaper_data.get("url", "/images/{0}.png".format(weekday))
+    wallpaper_url = wallpaper_data.get("url",
+                                       "/images/{0}.png".format(weekday))
     append_line.append(BAR)
     append_line.append('{0}: {1}-每日随机资讯'.format(TITLE, today))
     append_line.append('{0}: 资讯'.format(TAGS))
@@ -55,11 +56,16 @@ def build_title():
     # 壁纸
     line = build_markdown(wallpaper, MarkdownType.IMAGE, wallpaper_url)
     append_line.append(line)
+    # 侵权说明
+    append_line.append(
+        "> 内容均不涉及转发、复制原文等，仅提供外链和标题聚合（可视做聚合引擎且非商业不盈利），查看详情请拷贝并跳转原始链接。如有侵权，还请告知。"
+    )
     return append_line
 
 
 def publish(days=(0, )):
-    file_name = "./publish.{0}.md".format(datetime.now().strftime(DAILY_FORMAT))
+    file_name = "./publish.{0}.md".format(
+        datetime.now().strftime(DAILY_FORMAT))
     if os.path.exists(file_name):
         print("今天已经导出了文档了~~")
     lines = []
@@ -76,11 +82,8 @@ def publish(days=(0, )):
             # 标题
             if article is None:
                 continue
-            line = build_markdown(
-                article.get("title", None),
-                MarkdownType.TITLE,
-                article.get("url", None)
-            )
+            line = build_markdown(article.get("title", None),
+                                  MarkdownType.TITLE, article.get("url", None))
             lines.append(line)
             del line
             # 论文
@@ -93,10 +96,8 @@ def publish(days=(0, )):
                 description_list = description.split('\n\n')
                 if len(description_list) > 0:
                     description = description_list[0]
-                line = build_markdown(
-                    [author, tags, code, description],
-                    MarkdownType.PAPER
-                )
+                line = build_markdown([author, tags, code, description],
+                                      MarkdownType.PAPER)
                 lines.append(line)
                 del line
             # 其他类型，包括新闻、小说、科技，财经
@@ -112,10 +113,10 @@ def publish(days=(0, )):
                         tags = article.get("tags", "")
                         count = article.get("count", "").replace("\n", "")
                         status = article.get("status", "")
-                        line = build_markdown(
-                            [author, tags, intro.replace("\n", ""), count, status],
-                            MarkdownType.NOVEL
-                        )
+                        line = build_markdown([
+                            author, tags,
+                            intro.replace("\n", ""), count, status
+                        ], MarkdownType.NOVEL)
                         lines.append(line)
                         del line
                     else:
@@ -126,19 +127,15 @@ def publish(days=(0, )):
                             summ = summary(article.get('title'), text)
                             if summ.strip() == "":
                                 summ = article.get("title", None)
-                        line = build_markdown(
-                            summ,
-                            MarkdownType.REFERENCE
-                        )
+                        line = build_markdown(summ, MarkdownType.REFERENCE)
                         lines.append(line)
                         del line
                 else:
-                    line = build_markdown(
-                        description,
-                        MarkdownType.REFERENCE
-                    )
+                    line = build_markdown(description, MarkdownType.REFERENCE)
                     lines.append(line)
                     del line
+    lines.append("\n")
+    lines.append("> 每日夜间，随机给予一天的信息流，防止信息茧房（后续会接入更多信息源），感谢你的阅读！希望你能够从这边获取更多知识！")
     # 导出Markdown文件
     with open(file_name, mode='w', encoding='utf-8') as f:
         for line in lines:
@@ -153,8 +150,9 @@ def build_markdown(text, markdown_type: MarkdownType, url=None):
         line = "{0} {1}".format(HASH, text)
     elif markdown_type == MarkdownType.TITLE:
         line = "{0} {1}{2}{3}{4}{5}{6}".format("".join(HASH * 3), LEFT_BRACKET,
-                                               text, RIGHT_BRACKET, LEFT_ROUND_BRACKET,
-                                               url, RIGHT_ROUND_BRACKET)
+                                               text, RIGHT_BRACKET,
+                                               LEFT_ROUND_BRACKET, url,
+                                               RIGHT_ROUND_BRACKET)
     elif markdown_type == MarkdownType.REFERENCE:
         line = "{0} {1}{2}".format(GREATER_THAN, DESCRIPTION, text)
     elif markdown_type == MarkdownType.NOVEL:
@@ -191,9 +189,10 @@ def load_data_from_mongo(days=(0, )):
                 count = 1
             elif category == "paper":
                 count = 2
-            datas.setdefault(COLLECTIONS[category], recommendation_media(category, count=count))
+            datas.setdefault(COLLECTIONS[category],
+                             recommendation_media(category, count=count))
     return datas
 
 
 if __name__ == '__main__':
-    publish((0,))
+    publish((0, ))
