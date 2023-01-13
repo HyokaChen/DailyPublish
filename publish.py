@@ -52,12 +52,13 @@ def build_title():
     append_line.append('{0}: {1}'.format(THUMBNAIL, wallpaper_url))
     append_line.append('{0}: {1}'.format(DATE, low_today_))
     append_line.append(BAR)
-    append_line.append('\r\n')
+    append_line.append('\n')
     # 壁纸
     line = build_markdown(wallpaper, MarkdownType.IMAGE, wallpaper_url)
     append_line.append(line)
     # 侵权说明
-    append_line.append(
+    append_line.insert(
+        0,
         "> 内容均不涉及转发、复制原文等，仅提供外链和标题聚合（可视做聚合引擎且非商业不盈利），查看详情请拷贝并跳转原始链接。如有侵权，还请告知。"
     )
     return append_line
@@ -134,7 +135,6 @@ def publish(days=(0, )):
                     line = build_markdown(description, MarkdownType.REFERENCE)
                     lines.append(line)
                     del line
-    lines.append("\n")
     lines.append("> 每日夜间，随机给予一天的信息流，防止信息茧房（后续会接入更多信息源），感谢你的阅读！希望你能够从这边获取更多知识！")
     # 导出Markdown文件
     with open(file_name, mode='w', encoding='utf-8') as f:
