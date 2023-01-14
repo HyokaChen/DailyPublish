@@ -135,6 +135,7 @@ def publish(days=(0, )):
                     line = build_markdown(description, MarkdownType.REFERENCE)
                     lines.append(line)
                     del line
+    lines.append("\n")
     lines.append("> 每日夜间，随机给予一天的信息流，防止信息茧房（后续会接入更多信息源），感谢你的阅读！希望你能够从这边获取更多知识！")
     # 导出Markdown文件
     with open(file_name, mode='w', encoding='utf-8') as f:
