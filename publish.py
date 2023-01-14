@@ -53,14 +53,14 @@ def build_title():
     append_line.append('{0}: {1}'.format(DATE, low_today_))
     append_line.append(BAR)
     append_line.append('\n')
+    # 侵权说明
+    append_line.append(
+        "> 内容均不涉及转发、复制原文等，仅提供外链和标题聚合（可视做聚合引擎且非商业不盈利），查看详情请拷贝并跳转原始链接。如有侵权，还请告知。\n"
+    )
+    append_line.append('\n')
     # 壁纸
     line = build_markdown(wallpaper, MarkdownType.IMAGE, wallpaper_url)
     append_line.append(line)
-    # 侵权说明
-    append_line.insert(
-        0,
-        "> 内容均不涉及转发、复制原文等，仅提供外链和标题聚合（可视做聚合引擎且非商业不盈利），查看详情请拷贝并跳转原始链接。如有侵权，还请告知。\n"
-    )
     return append_line
 
 
