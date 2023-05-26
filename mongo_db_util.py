@@ -129,7 +129,7 @@ def find_news(days=(0,)):
         elif collection == 'tencent':
             for site in ["tencent", "hupu"]:
                 pipeline[0]["$match"]["$and"][1]["site"] = site
-                pipeline[1]["$sample"]["size"] = 4
+                pipeline[1]["$sample"]["size"] = 5
                 site_items = mdb[collection].aggregate(pipeline, allowDiskUse=True)
                 news.extend(site_items)
         elif collection == 'sina':
